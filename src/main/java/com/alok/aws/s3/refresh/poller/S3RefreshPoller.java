@@ -78,6 +78,7 @@ public class S3RefreshPoller {
             return;
         }
         this.apprefresher = apprefresher;
+        this.listenerRegistered = true;
 
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         log.info("registerListener::scheduling::{}::{}::{}", bucketName, appRefreshTrackerObjectKey, pollingInterval);
