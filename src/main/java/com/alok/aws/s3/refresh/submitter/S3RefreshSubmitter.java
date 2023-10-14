@@ -1,8 +1,11 @@
 package com.alok.aws.s3.refresh.submitter;
 
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 @Slf4j
@@ -69,13 +72,24 @@ public class S3RefreshSubmitter {
         System.out.println("submitRefreshServiceA::");
         log.info("submitRefreshServiceA::{}::{}::{}", bucketName, appARefreshTrackerObjectKey, epochTime);
 
-        //TODO: implement S3 update
-
+        s3Client.putObject(
+                PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(appARefreshTrackerObjectKey)
+                        .build(),
+                RequestBody.fromBytes(Long.toString(epochTime).getBytes(StandardCharsets.UTF_8))
+        );
     }
 
     public void submitRefreshServiceB(long epochTime) {
         log.info("submitRefreshServiceB::{}::{}::{}", bucketName, appBRefreshTrackerObjectKey, epochTime);
 
-        //TODO: implement S3 update
+        s3Client.putObject(
+                PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(appBRefreshTrackerObjectKey)
+                        .build(),
+                RequestBody.fromBytes(Long.toString(epochTime).getBytes(StandardCharsets.UTF_8))
+        );
     }
 }
