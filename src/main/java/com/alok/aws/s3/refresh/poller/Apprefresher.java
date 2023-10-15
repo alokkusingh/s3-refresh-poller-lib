@@ -30,7 +30,7 @@ public interface Apprefresher {
          try {
              latestRefreshTimestamp = Long.parseLong(reader.readLine());
          } catch (IOException e) {
-             log.warn("Refresh tracker read failed, error: {}", e.getMessage());
+             log.error("Refresh tracker read failed, error: {}", e.getMessage());
              log.debug(Arrays.toString(e.getStackTrace()));
          } finally {
              try {
