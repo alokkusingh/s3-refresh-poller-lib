@@ -4,8 +4,9 @@ import com.alok.aws.s3.refresh.AppType;
 import com.alok.aws.s3.refresh.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 import software.amazon.awssdk.services.s3.S3Client;
+
+import java.util.Objects;
 
 public class S3RefreshPollerBuilder {
     private final Logger log = LoggerFactory.getLogger(S3RefreshPollerBuilder.class);
@@ -42,9 +43,15 @@ public class S3RefreshPollerBuilder {
     }
 
     public S3RefreshPoller build() {
-        Assert.state(s3Client != null, "S3Client object must be provided");
-        Assert.state(bucketName != null, "bucket name must be provided");
-        Assert.state(appType != null , "AppType must be set");
+        if (Objects.isNull(s3Client)) {
+            throw new AssertionError("S3Client object must be provided");
+        }
+        if (Objects.isNull(bucketName)) {
+            throw new AssertionError("bucket name must be provided");
+        }
+        if (Objects.isNull(appType)) {
+            throw new AssertionError("appType can't be null");
+        }
 
         if (pollingInterval == null) {
             pollingInterval = Constants.AWS_S3_REFRESH_POLLER_INTERVAL_DEFAULT;
@@ -52,7 +59,6 @@ public class S3RefreshPollerBuilder {
         if (pollingInitialDelay == null) {
             pollingInitialDelay = Constants.AWS_S3_REFRESH_POLLER_INITIAL_DELAY_DEFAULT;
         }
-
 
         String s3ObjectKeyName = null;
         if (appType == AppType.APPA) {

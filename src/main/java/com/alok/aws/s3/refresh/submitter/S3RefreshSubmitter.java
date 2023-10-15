@@ -3,13 +3,13 @@ package com.alok.aws.s3.refresh.submitter;
 import com.alok.aws.s3.refresh.AppType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Objects;
 
 public class S3RefreshSubmitter {
 
@@ -67,7 +67,9 @@ public class S3RefreshSubmitter {
 
     public void submitRefresh(AppType appType, long epochTime) {
         log.info("submitRefreshService::{}::{}::{}", appType, bucketName, epochTime);
-        Assert.state(appType != null, "appType can't be null");
+        if (Objects.isNull(appType)) {
+            throw new AssertionError("appType can't be null");
+        }
 
         s3Client.putObject(
                 PutObjectRequest.builder()

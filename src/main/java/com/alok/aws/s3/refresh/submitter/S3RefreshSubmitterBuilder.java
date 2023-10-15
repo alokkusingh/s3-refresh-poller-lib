@@ -3,10 +3,9 @@ package com.alok.aws.s3.refresh.submitter;
 import com.alok.aws.s3.refresh.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 import software.amazon.awssdk.services.s3.S3Client;
 
-import java.time.Instant;
+import java.util.Objects;
 
 public class S3RefreshSubmitterBuilder {
 
@@ -25,8 +24,14 @@ public class S3RefreshSubmitterBuilder {
     }
 
     public S3RefreshSubmitter build() {
-        Assert.state(s3Client != null, "S3Client object must be provided");
-        Assert.state(bucketName != null, "bucket name must be provided");
+
+        if (Objects.isNull(s3Client)) {
+            throw new AssertionError("S3Client object must be set");
+        }
+        if (Objects.isNull(bucketName)) {
+            throw new AssertionError("bucket name must be set");
+        }
+
         return S3RefreshSubmitter.getInstance(s3Client, bucketName, Constants.AWS_S3_REFRESH_TRACKER_OBJECT_KEY_APPA, Constants.AWS_S3_REFRESH_TRACKER_OBJECT_KEY_APPB);
     }
 }
