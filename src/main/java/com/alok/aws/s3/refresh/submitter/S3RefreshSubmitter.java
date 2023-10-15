@@ -65,7 +65,7 @@ public class S3RefreshSubmitter {
         submitRefresh(AppType.APPB, epochTime);
     }
 
-    public void submitRefresh(AppType appType, long epochTime) {
+    private void submitRefresh(AppType appType, long epochTime) {
         log.info("submitRefreshService::{}::{}::{}", appType, bucketName, epochTime);
         if (Objects.isNull(appType)) {
             throw new AssertionError("appType can't be null");
