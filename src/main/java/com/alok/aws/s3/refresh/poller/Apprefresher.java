@@ -1,6 +1,7 @@
 package com.alok.aws.s3.refresh.poller;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -12,10 +13,11 @@ import java.io.InputStreamReader;
 
 @FunctionalInterface
 public interface Apprefresher {
+    final Logger log = LoggerFactory.getLogger(Apprefresher.class);
 
      void refresh();
-     default void checkForRefresh(Logger logger, S3Client s3Client, String bucketName, String objectKey) {
-         logger.info("App refreshed at {}::{}::{}", bucketName, objectKey, S3RefreshPoller.getInstance().getLastRefreshTime());
+     default void checkForRefresh(S3Client s3Client, String bucketName, String objectKey) {
+         log.info("App refreshed at {}::{}::{}", bucketName, objectKey, S3RefreshPoller.getInstance().getLastRefreshTime());
          ResponseInputStream<GetObjectResponse> s3objectResponse = s3Client.getObject(GetObjectRequest.builder()
                          .bucket(bucketName)
                          .key(objectKey)
@@ -28,8 +30,8 @@ public interface Apprefresher {
          try {
              latestRefreshTimestamp = Long.valueOf(reader.readLine());
          } catch (IOException e) {
-             logger.warn("Refresh tracker read failed, error: {}", e.getMessage());
-             logger.debug(e.getStackTrace().toString());
+             log.warn("Refresh tracker read failed, error: {}", e.getMessage());
+             log.debug(e.getStackTrace().toString());
              return;
          } finally {
              try {
@@ -39,13 +41,13 @@ public interface Apprefresher {
              }
          }
 
-         logger.info("Data refreshed at {}::{}::{}", bucketName, objectKey, latestRefreshTimestamp);
+         log.info("Data refreshed at {}::{}::{}", bucketName, objectKey, latestRefreshTimestamp);
 
          if ( S3RefreshPoller.getInstance().getLastRefreshTime() <  latestRefreshTimestamp) {
              refresh();
              S3RefreshPoller.getInstance().setLastRefreshTime(latestRefreshTimestamp);
          } else {
-             logger.info("App is up to date");
+             log.info("App is up to date");
          }
      }
 }

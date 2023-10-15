@@ -1,15 +1,16 @@
 package com.alok.aws.s3.refresh.submitter;
 
 import com.alok.aws.s3.refresh.Constants;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import software.amazon.awssdk.services.s3.S3Client;
 
 import java.time.Instant;
 
-@Slf4j
 public class S3RefreshSubmitterBuilder {
 
+    private final Logger log = LoggerFactory.getLogger(S3RefreshSubmitterBuilder.class);
     private S3Client s3Client;
     private String bucketName;
 

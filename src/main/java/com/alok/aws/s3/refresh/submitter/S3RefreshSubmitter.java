@@ -1,6 +1,7 @@
 package com.alok.aws.s3.refresh.submitter;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -8,8 +9,9 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
-@Slf4j
 public class S3RefreshSubmitter {
+
+    private final Logger log = LoggerFactory.getLogger(S3RefreshSubmitter.class);
 
     private S3Client s3Client;
     private String bucketName;

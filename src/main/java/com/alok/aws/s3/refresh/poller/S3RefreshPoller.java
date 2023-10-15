@@ -1,16 +1,12 @@
 package com.alok.aws.s3.refresh.poller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.s3.S3Client;
-
-import java.time.Instant;
 import java.util.concurrent.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
-@Slf4j
 public class S3RefreshPoller {
+    private final Logger log = LoggerFactory.getLogger(S3RefreshPoller.class);
 
     private S3Client s3Client;
     private String bucketName;
@@ -83,7 +79,7 @@ public class S3RefreshPoller {
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         log.info("registerListener::scheduling::{}::{}::{}", bucketName, appRefreshTrackerObjectKey, pollingInterval);
         scheduledExecutorService.scheduleWithFixedDelay(
-                () -> apprefresher.checkForRefresh(log, s3Client, bucketName, appRefreshTrackerObjectKey),
+                () -> apprefresher.checkForRefresh(s3Client, bucketName, appRefreshTrackerObjectKey),
                 pollingInterval,
                 pollingInitialDelay,
                 TimeUnit.SECONDS
