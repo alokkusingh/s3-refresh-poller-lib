@@ -9,7 +9,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
+import java.util.Arrays;
 
 @FunctionalInterface
 public interface Apprefresher {
@@ -26,18 +26,17 @@ public interface Apprefresher {
 
          BufferedReader reader = new BufferedReader(new InputStreamReader(s3objectResponse));
 
-         Long latestRefreshTimestamp = null;
+         long latestRefreshTimestamp = 0;
          try {
-             latestRefreshTimestamp = Long.valueOf(reader.readLine());
+             latestRefreshTimestamp = Long.parseLong(reader.readLine());
          } catch (IOException e) {
              log.warn("Refresh tracker read failed, error: {}", e.getMessage());
-             log.debug(e.getStackTrace().toString());
-             return;
+             log.debug(Arrays.toString(e.getStackTrace()));
          } finally {
              try {
                  reader.close();
              } catch (IOException e) {
-                 throw new RuntimeException(e);
+                 log.warn("Failed to close the reader, error: {}", e.getMessage());
              }
          }
 

@@ -8,6 +8,7 @@ import java.util.concurrent.*;
 public class S3RefreshPoller {
     private final Logger log = LoggerFactory.getLogger(S3RefreshPoller.class);
 
+    private static volatile S3RefreshPoller instance;
     private S3Client s3Client;
     private String bucketName;
     private String appRefreshTrackerObjectKey;
@@ -15,7 +16,6 @@ public class S3RefreshPoller {
     private Long pollingInitialDelay;
     private Apprefresher apprefresher;
     private boolean listenerRegistered;
-    private static S3RefreshPoller instance;
     private long lastRefreshTime;
 
     private S3RefreshPoller(
@@ -58,9 +58,9 @@ public class S3RefreshPoller {
         return lastRefreshTime;
     }
 
-    protected long setLastRefreshTime(long lastRefreshTime) {
+    protected void setLastRefreshTime(long lastRefreshTime) {
         log.info("setLastRefreshTime::{}", lastRefreshTime);
-        return this.lastRefreshTime = lastRefreshTime;
+        this.lastRefreshTime = lastRefreshTime;
     }
 
     public static S3RefreshPollerBuilder builder() {

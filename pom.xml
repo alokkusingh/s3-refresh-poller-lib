@@ -9,7 +9,7 @@
 	<description>S3 Poller Library</description>
 	<properties>
 		<java.version>8</java.version>
-		<aws.java.sdk.version>2.15.50</aws.java.sdk.version>
+		<aws.java.sdk.version>2.20.97</aws.java.sdk.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
 

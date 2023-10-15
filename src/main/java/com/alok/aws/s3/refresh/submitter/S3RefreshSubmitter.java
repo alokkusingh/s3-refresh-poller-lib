@@ -15,12 +15,12 @@ public class S3RefreshSubmitter {
 
     private final Logger log = LoggerFactory.getLogger(S3RefreshSubmitter.class);
 
+    private static volatile S3RefreshSubmitter instance;
     private S3Client s3Client;
     private String bucketName;
     private String appARefreshTrackerObjectKey;
     private String appBRefreshTrackerObjectKey;
 
-    private static S3RefreshSubmitter instance;
 
     private S3RefreshSubmitter(
             S3Client s3Client,
