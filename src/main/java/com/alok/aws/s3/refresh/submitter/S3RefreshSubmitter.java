@@ -1,7 +1,9 @@
 package com.alok.aws.s3.refresh.submitter;
 
+import com.alok.aws.s3.refresh.AppType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -53,45 +55,30 @@ public class S3RefreshSubmitter {
         return new S3RefreshSubmitterBuilder();
     }
 
-    public void submitRefreshServiceA() {
-       submitRefreshServiceA(getEpochUtc());
+    public void submitRefresh(AppType appType) {
+       submitRefresh(appType, getEpochUtc());
     }
 
-    public void submitRefreshServiceB() {
-        submitRefreshServiceB(getEpochUtc());
-    }
-
-    public void submitRefreshServiceAll() {
+    public void submitRefresh() {
         long epochTime = getEpochUtc();
-        submitRefreshServiceA(epochTime);
-        submitRefreshServiceB(epochTime);
+        submitRefresh(AppType.APPA, epochTime);
+        submitRefresh(AppType.APPB, epochTime);
+    }
+
+    public void submitRefresh(AppType appType, long epochTime) {
+        log.info("submitRefreshService::{}::{}::{}", appType, bucketName, epochTime);
+        Assert.state(appType != null, "appType can't be null");
+
+        s3Client.putObject(
+                PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(appType == AppType.APPA? appARefreshTrackerObjectKey : appBRefreshTrackerObjectKey)
+                        .build(),
+                RequestBody.fromBytes(Long.toString(epochTime).getBytes(StandardCharsets.UTF_8))
+        );
     }
 
     private long getEpochUtc() {
         return Instant.now().getEpochSecond();
-    }
-    public void submitRefreshServiceA(long epochTime) {
-        System.out.println("submitRefreshServiceA::");
-        log.info("submitRefreshServiceA::{}::{}::{}", bucketName, appARefreshTrackerObjectKey, epochTime);
-
-        s3Client.putObject(
-                PutObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(appARefreshTrackerObjectKey)
-                        .build(),
-                RequestBody.fromBytes(Long.toString(epochTime).getBytes(StandardCharsets.UTF_8))
-        );
-    }
-
-    public void submitRefreshServiceB(long epochTime) {
-        log.info("submitRefreshServiceB::{}::{}::{}", bucketName, appBRefreshTrackerObjectKey, epochTime);
-
-        s3Client.putObject(
-                PutObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(appBRefreshTrackerObjectKey)
-                        .build(),
-                RequestBody.fromBytes(Long.toString(epochTime).getBytes(StandardCharsets.UTF_8))
-        );
     }
 }
